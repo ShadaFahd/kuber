@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: trainer-app
+data:
+  API_URL: "http://backend-service:3000"

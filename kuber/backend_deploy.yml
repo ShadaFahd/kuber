@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: trainer-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: shadaxxx/backend-trainer-portal
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DB_HOST
+          value: "devopsshadasqlserver.database.windows.net"
+        - name: DB_USER
+          value: "sqladminuser"
+        - name: DB_PASSWORD
+          value: "YourStrongP@ssw0rd"
+        - name: DB_NAME
+          value: "DevOps1-week10-shada-trainerdb"

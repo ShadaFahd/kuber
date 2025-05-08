@@ -3,13 +3,9 @@ const cors = require("cors");
 const { connectDB, sql } = require("./config/db.config");
 
 const app = express();
-
-// Enable CORS for all routes
 app.use(cors());
-
 app.use(express.json());
 
-// Create users table if it doesn't exist
 async function initializeDB() {
   try {
     const pool = await connectDB();
@@ -34,7 +30,7 @@ app.get("/api/user", async (req, res) => {
   try {
     const pool = await connectDB();
     const result = await pool.request().query("SELECT * FROM users");
-    res.json(result.recordset );
+    res.json(result.recordset);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -44,28 +40,17 @@ app.get("/api/user", async (req, res) => {
 app.post("/api/user", async (req, res) => {
   try {
     const { name, email, age, address } = req.body;
-
-    // Input validation
-    if (!name || !email) {
-      return res.status(400).json({ error: "Name and email are required" });
-    }
-
     const pool = await connectDB();
-    const result = await pool
-      .request()
+    await pool.request()
       .input("name", sql.VarChar, name)
       .input("email", sql.VarChar, email)
       .input("age", sql.Int, age)
-      .input("address", sql.VarChar, address).query(`
+      .input("address", sql.VarChar, address)
+      .query(`
         INSERT INTO users (name, email, age, address)
-        VALUES (@name, @email, @age, @address);
-        SELECT SCOPE_IDENTITY() AS id;
+        VALUES (@name, @email, @age, @address)
       `);
-
-    res.status(201).json({
-      message: "User created successfully",
-      userId: result.recordset[0].id,
-    });
+    res.status(201).json({ message: "User created successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -76,19 +61,14 @@ app.put("/api/user/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { name, email, age, address } = req.body;
-
-    if (!name || !email) {
-      return res.status(400).json({ error: "Name and email are required" });
-    }
-
     const pool = await connectDB();
-    const result = await pool
-      .request()
+    const result = await pool.request()
       .input("id", sql.Int, id)
       .input("name", sql.VarChar, name)
       .input("email", sql.VarChar, email)
       .input("age", sql.Int, age)
-      .input("address", sql.VarChar, address).query(`
+      .input("address", sql.VarChar, address)
+      .query(`
         UPDATE users
         SET name = @name,
             email = @email,
@@ -96,11 +76,9 @@ app.put("/api/user/:id", async (req, res) => {
             address = @address
         WHERE id = @id
       `);
-
     if (result.rowsAffected[0] === 0) {
       return res.status(404).json({ error: "User not found" });
     }
-
     res.json({ message: "User updated successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -112,15 +90,15 @@ app.delete("/api/user/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const pool = await connectDB();
-    const result = await pool.request().input("id", sql.Int, id).query(`
+    const result = await pool.request()
+      .input("id", sql.Int, id)
+      .query(`
         DELETE FROM users
         WHERE id = @id
       `);
-
     if (result.rowsAffected[0] === 0) {
       return res.status(404).json({ error: "User not found" });
     }
-
     res.json({ message: "User deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -132,3 +110,4 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   initializeDB();
 });
+

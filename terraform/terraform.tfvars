@@ -1,0 +1,6 @@
+resource_group_name = "DevOps1-week10-shada-assignment-rg"
+vnet_name           = "DevOps1-week10-shada-vnet"
+subnet_name         = "DevOps1-week10-shada-subnet"
+aks_name            = "DevOps1-week10-shada-aks"
+sql_server_name     = "devopsshadasqlserver"
+sql_database_name   = "DevOps1-week10-shada-trainerdb"
