@@ -4,4 +4,4 @@ metadata:
   name: frontend-config
   namespace: trainer-app
 data:
-  API_URL: "http://backend-service:3000"
+  API_URL: "http://57.158.80.38:3000"
